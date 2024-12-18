@@ -1,24 +1,97 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import Filter from "./components/Filter";
+import Form from "./components/Form";
+import List from "./components/List";
+import Search from "./components/Search";
+import FAQs_items from "./mocks/FAQS";
+import { makeID } from "./helpers";
 
 function App() {
+  const [FAQs, setFAQs] = useState(FAQs_items);
+  const [searchValue, setSearchValue] = useState("");
+  const [filterStatus, setFillerStatus] = useState("");
+  const [filterCate, setFilerCate] = useState([]);
+  const [editItem, setEditItem] = useState("");
+  let newList = [...FAQs];  
+  const [button, setButton] = useState("Add")
+  
+  
+  function onClickButton() {
+    setButton("Edit");
+  }
+  function onClickEdit(item) {
+    setEditItem(item)
+  }
+  function onClickFillter(value) {
+    setFilerCate(value); 
+    
+  }
+  if(filterCate.length > 0) {
+    newList = newList.filter((item) => filterCate.includes(item.categoryId));
+  }
+
+  function onClickFillterStatus(value) {
+    setFillerStatus(value)
+  }
+  if(filterStatus) {
+    newList = newList.filter((item) => item.status === filterStatus)
+  }
+
+  function onclickSubmit(item) {
+    let newFAQs = [...FAQs];
+    
+    if(item.id !== "") {
+      newFAQs.forEach((el, key) => {
+        if(el.id === item.id) {
+          newFAQs[key] = item;
+        }
+      })
+
+    }
+    else {
+      item.id = makeID();
+      newFAQs.unshift(item);
+    }
+    setFAQs(newFAQs);
+    setButton("Add");
+    
+  }
+  
+  function onclickDelete(idDelete) {
+    let newList = FAQs.filter((item) => item.id !== idDelete);
+    setFAQs(newList);
+  }
+  function onclickSearch(value) {
+    setSearchValue(value)
+  }
+  if(searchValue) {
+    newList = newList.filter((item) => item.question.includes(searchValue))
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <div className="container-fluid">
+        <h1 className="text-center">FAQs</h1>
+        <div className="row">
+          <Form
+            onclickSubmit={onclickSubmit}
+            editItem={editItem}
+            button={button}
+          />
+          <Filter
+            onClickFillter={onClickFillter}
+          />
+        </div>
+        <div className="card">
+          <Search 
+            onclickSearch={onclickSearch}
+          />
+          <List 
+            onClickEdit={onClickEdit}
+            items={newList} 
+            onclickDelete={onclickDelete}
+            onClickButton={onClickButton}
+          />
+        </div>
+      </div>
   );
 }
 
