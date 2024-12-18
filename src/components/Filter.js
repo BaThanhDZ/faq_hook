@@ -10,40 +10,28 @@ function Filter(props) {
     });
   function onClickFillter(event) {
     const target = event.target;
-    const elStatus = target.status;
-    const elCategory = target.categoryId;
+    const name = event.target.name;
+    const value = (name === "categoryId") ? parseInt(target.value) : target.value
     let _newFilter = {...newFilter};
-    let value = "";
-    switch(value) {
-      case elStatus:
-        value = target.value;
-        break;
-      case elCategory:
-        value = parseInt(target.value);
-        break;
-      default:
-        value = target.value;
-    }
-    if(target.checked) {
-      if( elStatus) {
-        setNewFilter({
-          ...newFilter,
-          status: [value]
-        })
-      }
-      else if(elCategory) {
-        setNewFilter({
-          ...newFilter,
-          categoryId: [value]
-        })
+
+    if (target.checked) {
+      if (name === "categoryId") {
+        _newFilter.categoryId.push(value); 
+      } else if (name === "status") {
+        _newFilter.status.push(value);
       }
     }
     else {
-      let index = _newFilter.findIndex(([item]) => item === value);
-      console.log(index)
-      _newFilter.splice(index, 1);
+      let index = "";
+      if (name === "categoryId") {
+        index = _newFilter.categoryId.findIndex((item) => item === value); 
+        _newFilter.categoryId.splice(index, 1);
+      } else if (name === "status") {
+        index = _newFilter.status.findIndex((item) => item === value);
+        _newFilter.status.splice(index, 1);
+      }
     }
-    setNewFilter(_newFilter); 
+    setNewFilter(_newFilter);
     props.onClickFillter(_newFilter);
 
 

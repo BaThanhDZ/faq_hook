@@ -9,8 +9,11 @@ import { makeID } from "./helpers";
 function App() {
   const [FAQs, setFAQs] = useState(FAQs_items);
   const [searchValue, setSearchValue] = useState("");
-  const [filterStatus, setFillerStatus] = useState("");
-  const [filterCate, setFilerCate] = useState([]);
+  const [filterCate, setFilerCate] = useState("");
+  const [filterList, setFilerList] = useState({
+        status: [],
+        categoryId: [],
+  });;
   const [editItem, setEditItem] = useState("");
   let newList = [...FAQs];  
   const [button, setButton] = useState("Add")
@@ -22,19 +25,25 @@ function App() {
   function onClickEdit(item) {
     setEditItem(item)
   }
-  function onClickFillter(value) {
-    setFilerCate(value); 
+  // function onClickFillter(value) {
+  //   setFilerCate(value); 
     
-  }
-  if(filterCate.length > 0) {
-    newList = newList.filter((item) => filterCate.includes(item.categoryId));
-  }
+  // }
+  // if(filterCate.length > 0) {
+  //   newList = newList.filter((item) => filterCate.includes(item.categoryId));
+  // }
 
-  function onClickFillterStatus(value) {
-    setFillerStatus(value)
+  function onClickFillter(value) {
+    setFilerList(value)
   }
-  if(filterStatus) {
-    newList = newList.filter((item) => item.status === filterStatus)
+  if(filterList.length > 0) {
+    if(filterList.status !== "") {
+      newList = newList.filter((item) => item.status === filterList.status);
+    }
+    else if(filterList.categoryId !== "") {
+      newList = newList.filter((item) => item.categoryId === filterList.categoryId);
+    }
+    console.log(newList);
   }
 
   function onclickSubmit(item) {
@@ -46,7 +55,6 @@ function App() {
           newFAQs[key] = item;
         }
       })
-
     }
     else {
       item.id = makeID();
@@ -54,7 +62,6 @@ function App() {
     }
     setFAQs(newFAQs);
     setButton("Add");
-    
   }
   
   function onclickDelete(idDelete) {
